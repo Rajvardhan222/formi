@@ -31,7 +31,7 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased width-full min-h-screen bg-gray-50 text-gray-900`}
           >
