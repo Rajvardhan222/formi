@@ -1,4 +1,3 @@
-import React from 'react'
 import {Monoton} from 'next/font/google'
 import { UserButton } from '@clerk/clerk-react'
 import { PlaceholdersAndVanishInput } from '@/components/placeholders-and-vanish-input'
@@ -8,9 +7,8 @@ const monoton = Monoton({
   subsets: ['latin'],
   variable: '--font-monoton',
 })
-type Props = {}
 
-function HomeNav({}: Props) {
+function HomeNav() {
   return (
          <nav className='flex items-center justify-between w-full px-4 py-3'>
            <div>

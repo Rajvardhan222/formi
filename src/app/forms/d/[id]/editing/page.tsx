@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import FormHeader from "@/components/FormHeader";
 import {
@@ -15,22 +15,18 @@ import {
 } from "@/lib/features/editslice/editform.slice";
 import ShortAnswer from "@/components/ShortAnswer";
 
-type Props = {
-  params: { id: string };
-};
-
 export type ElementType = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: React.ComponentType<any>;
 };
-export const formMappingToElement: ElementType = {
+const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
 };
-const EditFormPage = ({ params }: Props) => {
+const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: formId } = use(params);
   const dispatch = useAppDispatch();
   const form = useAppSelector((state) => state.Editform);
   const currentlyEditingElementId = form.currentEditingElementId;
-
-  const formId = params.id;
 
   useEffect(() => {
     //fetch form data based on the ID from the URL or state

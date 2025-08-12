@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useEffect } from 'react'
+import React, { useEffect, use } from 'react'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
 import FormHeader from '@/components/FormHeader'
 import ShortAnswer from '@/components/ShortAnswer'
 import { updateFormResponse } from '@/lib/features/responseformSlice/ResponseFormSlice';
-type Props = {
-  params: { id: string }
-}
 
 type ElementType = {
   [key: string]: React.ComponentType<{
@@ -33,11 +30,10 @@ const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
 };
 
-const FormResponsePage = ({ params }: Props) => {
+const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: formId } = use(params);
   const dispatch = useAppDispatch();
   const formData = useAppSelector((state) => state.ResponseForm);
-  
-  const formId = params.id;
   const formTitle = formData.formTitle || "Untitled Form";
   const formDescription = formData.formDescription || "Please fill out this form";
   const elements = formData.elements || [];
