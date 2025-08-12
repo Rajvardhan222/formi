@@ -24,6 +24,7 @@ type Props = {
 };
 
 // Utility function for easy console logging with template literals
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const lg = (...args: any[]) => console.log(...args);
 
 const ShortAnswer = ({

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import FormHeader from "@/components/FormHeader";
 import {
@@ -15,40 +15,55 @@ import {
 } from "@/lib/features/editslice/editform.slice";
 import ShortAnswer from "@/components/ShortAnswer";
 
-type Props = {
-  params: { id: string };
-};
-
 export type ElementType = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: React.ComponentType<any>;
 };
-export const formMappingToElement: ElementType = {
+const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
 };
-const EditFormPage = ({ params }: Props) => {
+const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: formId } = use(params);
   const dispatch = useAppDispatch();
   const form = useAppSelector((state) => state.Editform);
   const currentlyEditingElementId = form.currentEditingElementId;
 
-  const formId = params.id;
+  const fetchForm = async () => {
+    const response = await fetch(`/api/getForm/${formId}`, {
+      method: "GET",
+    });
+    console.log(response);
+    if (response.status === 404) {
+      // if returns 404 it means a new form is there
+      dispatch(
+        initialRender({
+          id: formId,
+        })
+      );
+
+      dispatch(
+        addElement({
+          type: "short_answer",
+          label: "New Short Answer",
+          required: false,
+        })
+      );
+     
+    } else if (response.status === 200) {
+      // if returns a 200 it means it already exists
+      const formData = await response.json();
+      dispatch(initialRender({ id: formId, ...formData }));
+    }
+  };
 
   useEffect(() => {
-    //fetch form data based on the ID from the URL or state
+    // get form from the get url
 
-    //if that id does not exist then initialise the empty new form from reducer in the state
+    fetchForm();
 
-    dispatch(
-      initialRender({
-        id: formId,
-      })
-    );
-    dispatch(
-      addElement({
-        type: "short_answer",
-        label: "New Short Answer",
-        required: false,
-      })
-    );
+    //if returns 404 it means a new form is there
+
+    // if returns a 200 it means it already exists
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formId]);
@@ -85,13 +100,17 @@ const EditFormPage = ({ params }: Props) => {
               description={element.description}
               required={element.required}
               isCurrentlyEditing={
-                currentlyEditingElementId === element.id ? currentlyEditingElementId : null
+                currentlyEditingElementId === element.id
+                  ? currentlyEditingElementId
+                  : null
               }
               onQuestionChange={(question: string) =>
                 dispatch(ElementQuestionChange({ id: element.id, question }))
               }
               onDescriptionChange={(description: string) =>
-                dispatch(ElementDescriptionChange({ id: element.id, description }))
+                dispatch(
+                  ElementDescriptionChange({ id: element.id, description })
+                )
               }
               onRequiredChange={(required: boolean) =>
                 dispatch(ElementRequiredChange({ id: element.id, required }))

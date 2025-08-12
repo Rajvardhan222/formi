@@ -2,9 +2,19 @@
 
 import HomeNav from '@/components/home-nav'
 import { Plus } from 'lucide-react'
+import { nanoid } from 'nanoid'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
-const page = () => {
+const Page = () => {
+  const router = useRouter()
+  
+  const navigateToFormCreation = () => {
+        const formId = nanoid()
+
+        router.push(`/forms/d/${formId}/editing`);
+
+  };
   return (
     <div>
      <HomeNav/>
@@ -14,6 +24,8 @@ const page = () => {
           <Plus 
             size={48} 
             className='text-muted-foreground group-hover:text-primary transition-all duration-300 group-hover:rotate-90'
+
+            onClick={navigateToFormCreation}
           />
         </div>
      </div>
@@ -21,4 +33,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
