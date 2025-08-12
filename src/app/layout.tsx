@@ -33,9 +33,9 @@ export default function RootLayout({
         disableTransitionOnChange
       >
         <StoreProvider>
-          <html lang="en" suppressHydrationWarning>
+          <html lang="en" suppressHydrationWarning className="">
             <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased width-full min-h-screen bg-gray-50 text-gray-900`}
+              className={`${geistSans.variable} ${geistMono.variable} antialiased width-full  bg-gray-50 text-gray-900 dark:bg-gray-950`}
             >
               {children}
             </body>

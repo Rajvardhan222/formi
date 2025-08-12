@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import formSlice from "./features/editslice/editform.slice"
+import responseSlice from './features/responseformSlice/ResponseFormSlice'
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      Editform: formSlice
+      Editform: formSlice,
+      ResponseForm: responseSlice
     }
   })
 }

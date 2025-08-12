@@ -21,30 +21,30 @@ import {
 
 const frameworks = [
   {
-    value: "next.js",
-    label: "Next.js",
+    value: "short_answer",
+    label: "Short Answer",
   },
   {
-    value: "sveltekit",
-    label: "SvelteKit",
+    value: "long_answer",
+    label: "Long Answer",
   },
   {
-    value: "nuxt.js",
-    label: "Nuxt.js",
+    value: "multiple_choice",
+    label: "Multiple Choice",
   },
   {
-    value: "remix",
-    label: "Remix",
+    value: "checkbox",
+    label: "Checkbox",
   },
   {
-    value: "astro",
-    label: "Astro",
+    value: "dropdown",
+    label: "Dropdown",
   },
 ]
 
 export function ExampleCombobox() {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [value, setValue] = React.useState("short_answer")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,19 +53,22 @@ export function ExampleCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[200px] justify-between bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            : "Select type..."}
+          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50 text-gray-500 dark:text-gray-400" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+      <PopoverContent className="w-[200px] p-0 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600">
+        <Command className="bg-white dark:bg-gray-900">
+          <CommandInput 
+            placeholder="Search type..." 
+            className="text-black dark:text-white bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700"
+          />
+          <CommandList className="bg-white dark:bg-gray-900">
+            <CommandEmpty className="text-gray-500 dark:text-gray-400">No type found.</CommandEmpty>
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
@@ -75,10 +78,11 @@ export function ExampleCombobox() {
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}
+                  className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                 >
                   <CheckIcon
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "mr-2 h-4 w-4 text-green-600 dark:text-green-400",
                       value === framework.value ? "opacity-100" : "opacity-0"
                     )}
                   />

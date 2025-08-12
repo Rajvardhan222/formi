@@ -46,8 +46,28 @@ export const formSlice = createSlice({
         options: action.payload.options || [],
         required: action.payload.required || false,
       };
-      state.elements.push(newElement);
+      //add the new element just below the currently editing element not at the end
+      if (action.payload.currentEditingElementId) {
+        const currentIndex = state.elements.findIndex(el => el.id === action.payload.currentEditingElementId);
+        if (currentIndex !== -1) {
+          state.elements.splice(currentIndex + 1, 0, newElement);
+        } else {
+          state.elements.push(newElement); // Fallback if current editing element not found
+        }
+      } else {
+        // If no current editing element, just add to the end
+        state.elements.push(newElement);
+      }
       state.currentEditingElementId = newElement.id;
+    },
+    updateCurrentlyEditingElement: (state, action) => {
+       const {id} = action.payload;
+       console.log('got the id to update: ', id);
+       const element = state.elements.find(el => el.id === id);
+       if (element) {
+         state.currentEditingElementId = element.id;
+         
+       }
     },
 
     updateTitle: (state, action) => {
@@ -98,6 +118,7 @@ export const {
     onDescriptionChange,
     onRequiredChange,
     deleteElement,
+    updateCurrentlyEditingElement
 } = formSlice.actions;
 
 // Export the reducer to be used in the store

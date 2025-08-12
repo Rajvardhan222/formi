@@ -19,15 +19,16 @@ type Props = {
   params: { id: string };
 };
 
-type ElementType = {
+export type ElementType = {
   [key: string]: React.ComponentType<any>;
 };
-const formMappingToElement: ElementType = {
+export const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
 };
 const EditFormPage = ({ params }: Props) => {
   const dispatch = useAppDispatch();
   const form = useAppSelector((state) => state.Editform);
+  const currentlyEditingElementId = form.currentEditingElementId;
 
   const formId = params.id;
 
@@ -63,8 +64,8 @@ const EditFormPage = ({ params }: Props) => {
   const formTitle = form?.formTitle || "";
   const formDescription = form?.formDescription || "";
   return (
-    <div className="w-full h-screen">
-      <div className="md:w-1/2 m-auto my-10 flex flex-col gap-6">
+    <div className="w-full bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+      <div className="md:w-1/2 m-auto py-10 flex flex-col gap-6">
         <FormHeader
           viewMode="admin"
           title={formTitle}
@@ -78,10 +79,14 @@ const EditFormPage = ({ params }: Props) => {
           return (
             <ElementComponent
               key={element.id}
+              id={element.id}
               viewMode="admin"
               question={element.label}
               description={element.description}
               required={element.required}
+              isCurrentlyEditing={
+                currentlyEditingElementId === element.id ? currentlyEditingElementId : null
+              }
               onQuestionChange={(question: string) =>
                 dispatch(ElementQuestionChange({ id: element.id, question }))
               }
