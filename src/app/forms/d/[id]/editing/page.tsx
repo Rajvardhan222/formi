@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, use } from "react";
+import React, { useEffect, use, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import FormHeader from "@/components/FormHeader";
 import {
@@ -14,6 +14,7 @@ import {
   onRequiredChange as ElementRequiredChange,
 } from "@/lib/features/editslice/editform.slice";
 import ShortAnswer from "@/components/ShortAnswer";
+import LoadingPage from "@/components/ui/LoadingPage";
 
 export type ElementType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +28,8 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const dispatch = useAppDispatch();
   const form = useAppSelector((state) => state.Editform);
   const currentlyEditingElementId = form.currentEditingElementId;
+  const isInitialGetRequestDone = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchForm = async () => {
     const response = await fetch(`/api/getForm/${formId}`, {
@@ -48,25 +51,53 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
           required: false,
         })
       );
-     
     } else if (response.status === 200) {
       // if returns a 200 it means it already exists
       const formData = await response.json();
+      console.log("formData in the client as it is already there", formData);
       dispatch(initialRender({ id: formId, ...formData }));
     }
+
+    isInitialGetRequestDone.current = true;
+    setIsLoading(false);
   };
+  const isrunning = useRef(false);
 
   useEffect(() => {
-    // get form from the get url
-
     fetchForm();
+  }, [formId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    //if returns 404 it means a new form is there
+  // Separate useEffect for auto-save that depends on form state
+  useEffect(() => {
+    if (!isInitialGetRequestDone.current) {
+      return;
+    }
 
-    // if returns a 200 it means it already exists
+    const updateForm = async () => {
+      console.log("Current form state in updateForm:", form);
+      await fetch("/api/saveOrUpdateForm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formId: formId,
+          formData: {
+            title: form.formTitle,
+            description: form.formDescription,
+            elements: form.elements,
+          },
+        }),
+      });
+    };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formId]);
+    if(!isrunning.current) {
+      isrunning.current = true;
+      updateForm().finally(() => {
+        isrunning.current = false;
+      });
+    }
+  }, [form, formId]);
 
   function onTitleChange(newTitle: string) {
     dispatch(updateTitle(newTitle));
@@ -78,6 +109,14 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const formTitle = form?.formTitle || "";
   const formDescription = form?.formDescription || "";
+
+  // Loading component
+  if (isLoading) {
+    return (
+     <LoadingPage/>
+    );
+  }
+
   return (
     <div className="w-full bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
       <div className="md:w-1/2 m-auto py-10 flex flex-col gap-6">
