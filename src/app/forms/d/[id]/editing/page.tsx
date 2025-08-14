@@ -15,6 +15,7 @@ import {
 } from "@/lib/features/editslice/editform.slice";
 import ShortAnswer from "@/components/ShortAnswer";
 import LoadingPage from "@/components/ui/LoadingPage";
+import MultiChoiceComponent from "@/components/MultiChoiceComponent";
 
 export type ElementType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,6 +23,7 @@ export type ElementType = {
 };
 const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
+  multi_choice: MultiChoiceComponent,
 };
 const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: formId } = use(params);
@@ -138,6 +140,7 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
               question={element.label}
               description={element.description}
               required={element.required}
+              questionType={element.type}
               isCurrentlyEditing={
                 currentlyEditingElementId === element.id
                   ? currentlyEditingElementId

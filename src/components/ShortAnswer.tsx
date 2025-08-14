@@ -28,6 +28,7 @@ type Props = {
 const lg = (...args: any[]) => console.log(...args);
 
 const ShortAnswer = ({
+  questionType,
   viewMode,
   question = "",
   description = "",
@@ -110,7 +111,7 @@ const ShortAnswer = ({
             />
           )}
         </div>
-        <Compobobox />
+        <Compobobox questionType={questionType} />
       </div>
       <div className="w-full h-4"></div>
       <hr className="w-full border-gray-200 dark:border-gray-700" />
