@@ -8,6 +8,7 @@ import { updateFormResponse } from '@/lib/features/responseformSlice/ResponseFor
 import LoadingPage from '@/components/ui/LoadingPage';
 import { setFormStore } from '@/lib/features/responseformSlice/ResponseFormSlice';
 import FormAlreadySubmited from '@/components/ui/FormAlreadySubmited';
+import MultiChoiceComponent from '@/components/MultiChoiceComponent';
 
 type ElementType = {
   [key: string]: React.ComponentType<{
@@ -33,6 +34,7 @@ const currentTimeKey = "currentTime"
 
 const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
+  multi_choice:MultiChoiceComponent
 };
 
 const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -193,6 +195,7 @@ console.log(isNewUser)
               viewMode="user"
               question={element.label}
               description={element.description}
+              element={element}
               required={element.required}
               value={responses[element.id] || ""}
               onValueChange={(value: string) => handleResponseChange(element.id, value)}
