@@ -3,12 +3,32 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { nanoid } from 'nanoid'; // For generating unique IDs
 
+let componentTypesStructure= {
+  "short_answer":{
+    label: "Short Question",
+    description: "description",
+    required: false,
+    type: "short_answer"
+
+  },
+  "multi_choice": {
+   
+    label: "Multiple Choice Question",
+    description: "description",
+    required: false,
+    type: "multi_choice",
+    options: [{id: nanoid(), label: "option 1"}],
+  }
+}
+
+type componentType = keyof typeof componentTypesStructure;
+
 type initialStateType = {
     elements: Array<{
         id: string;
-        type: string;
+        type: componentType;
         label: string;
-        options?: Array<string>;
+        options?: Array<{id: string; label: string}>;
         required?: boolean;
         description?: string;
     }>;
@@ -36,6 +56,49 @@ export const formSlice = createSlice({
       state.formTitle = action.payload.formTitle || "Untitled Form";
       state.formDescription = action.payload.formDescription || "No Description";
       state.elements = action.payload.elements || [];
+    },
+    updateFormElementType:(state,action:{payload:{type:componentType}}) => {
+        let getId = state?.currentEditingElementId;
+        if (!getId) {
+          console.error("No current editing element ID found.");
+          return;
+        }
+        console.log(getId)
+
+        const elementIndex = state.elements.findIndex(el => el.id === getId);
+        console.log(elementIndex)
+
+        const newElement = componentTypesStructure[action.payload.type];
+        console.log("new element",newElement)
+
+        if (elementIndex !== -1 && newElement) {
+          state.elements[elementIndex] = { ...state.elements[elementIndex], ...newElement };
+        }
+    },
+    addMultiChoiceFormOption:(state,action) => {
+      const { id } = action.payload;
+      const element = state.elements.find(el => el.id === id);
+      if (element && element.type === "multi_choice") {
+        if (!element.options) {
+          element.options = [];
+        }
+        element.options.push({
+          id: nanoid(),
+          label: "Option " + (element.options.length + 1)
+        });
+      } else {
+        console.error("Element not found or is not a multi-choice type.");
+      }
+    },
+    deleteMultiChoiceFormOption:(state, action) => {
+      const { id, optionId } = action.payload;
+      const element = state.elements.find(el => el.id === id);
+      if (element && element.type === "multi_choice") {
+        if(element.options?.length == 1) return;
+        element.options = element.options?.filter(option => option.id !== optionId);
+      } else {
+        console.error("Element not found or is not a multi-choice type.");
+      }
     },
     addElement: (state, action) => {
       const newElement = {
@@ -111,6 +174,7 @@ export const formSlice = createSlice({
 // Export the actions so you can use them in your components
 export const {
     initialRender,
+    updateFormElementType,
     addElement,
     updateTitle,
     updateDescription,
@@ -118,7 +182,9 @@ export const {
     onDescriptionChange,
     onRequiredChange,
     deleteElement,
-    updateCurrentlyEditingElement
+    updateCurrentlyEditingElement,
+    addMultiChoiceFormOption,
+    deleteMultiChoiceFormOption
 } = formSlice.actions;
 
 // Export the reducer to be used in the store

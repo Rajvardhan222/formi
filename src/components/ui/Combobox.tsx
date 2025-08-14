@@ -18,6 +18,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useAppDispatch } from "@/lib/hooks"
+import { updateFormElementType } from "@/lib/features/editslice/editform.slice"
 
 const frameworks = [
   {
@@ -29,7 +31,7 @@ const frameworks = [
     label: "Long Answer",
   },
   {
-    value: "multiple_choice",
+    value: "multi_choice",
     label: "Multiple Choice",
   },
   {
@@ -41,10 +43,21 @@ const frameworks = [
     label: "Dropdown",
   },
 ]
-
-export function ExampleCombobox() {
+type QuestionType = "short_answer" | "multi_choice" ;
+export function ExampleCombobox({ questionType }: { questionType: QuestionType }) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("short_answer")
+  const [value, setValue] = React.useState<QuestionType>(questionType)
+
+  const dispatch = useAppDispatch()
+
+  //when the value of the form changes
+  React.useEffect(() => {
+    if (value) {
+      console.log("Selected type:", value)
+      // Dispatch an action to update the form state
+      dispatch(updateFormElementType({ type: value }))
+    }
+  }, [value])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -75,7 +88,19 @@ export function ExampleCombobox() {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
+                    console.log("=== DEBUG INFO ===");
+                    console.log("Clicked framework:", framework);
+                    console.log("onSelect currentValue:", currentValue);
+                    console.log("framework.value:", framework.value);
+                    console.log("current value state:", value);
+                    
+                    // Only set if it's a valid QuestionType
+                    if (framework.value === "short_answer" || framework.value === "multi_choice") {
+                      console.log("Setting value to:", framework.value);
+                      setValue(framework.value as QuestionType);
+                    } else {
+                      console.log("Invalid type, not setting:", framework.value);
+                    }
                     setOpen(false)
                   }}
                   className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
