@@ -16,26 +16,11 @@ type initialStateType = {
 };
 const initialState: initialStateType = {
   elements: [
-    // Example initial element
-    {
-      id: "1",
-      type: "short_answer",
-      label: "Sample Question",
-      required: false,
-      description: "This is a sample description",
-    },
-    {
-      id: "2",
-      type: "short_answer",
-      label: "Sample Multiple Choice Question",
-      required: true,
-      description:
-        "This is a sample description for a multiple choice question",
-    },
+   
   ],
-  formId: "788",
-  formTitle: "Student registration form",
-  formDescription: "students should fill it properly",
+  formId: null,
+  formTitle: "",
+  formDescription: "",
   responses: [],
 };
 
