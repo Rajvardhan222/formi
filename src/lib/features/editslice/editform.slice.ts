@@ -63,13 +63,12 @@ export const formSlice = createSlice({
           console.error("No current editing element ID found.");
           return;
         }
-        console.log(getId)
+       
 
         const elementIndex = state.elements.findIndex(el => el.id === getId);
-        console.log(elementIndex)
+       
 
         const newElement = componentTypesStructure[action.payload.type];
-        console.log("new element",newElement)
 
         if (elementIndex !== -1 && newElement) {
           state.elements[elementIndex] = { ...state.elements[elementIndex], ...newElement };
@@ -123,9 +122,12 @@ export const formSlice = createSlice({
       }
       state.currentEditingElementId = newElement.id;
     },
+    copyElement:(state,action) => {
+
+    },
     updateCurrentlyEditingElement: (state, action) => {
        const {id} = action.payload;
-       console.log('got the id to update: ', id);
+     
        const element = state.elements.find(el => el.id === id);
        if (element) {
          state.currentEditingElementId = element.id;

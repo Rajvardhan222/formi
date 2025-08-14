@@ -19,7 +19,6 @@ export const POST = async (req: Request) => {
                     user_agent: userAgent,
                 });
 
-            console.log("Response inserted successfully:", response);
             
             // Create a secure cookie that users cannot edit/delete
             const cookieValue = `${formId}_${Date.now()}`;
@@ -43,7 +42,6 @@ export const POST = async (req: Request) => {
 
 
     } catch (error) {
-        console.log(error)
         return new Response("Internal Server Error", {
             status: 500,
         });

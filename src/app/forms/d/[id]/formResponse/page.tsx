@@ -69,7 +69,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
     });
     if (response.status === 200) {
       const formData = await response.json();
-      console.log("Form data fetched successfully:", formData);
       dispatch(setFormStore(formData));
     } else {
       console.error("Failed to fetch form data");
@@ -78,23 +77,17 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     // Check if user has already submitted this form
-    console.log("🍪 Checking cookies for form submission...");
-    console.log("📋 Current formId:", formId);
-    console.log("🔍 All cookies:", document.cookie);
     
     const cookie = document.cookie.split('; ').find(row => row.startsWith('formSubmission='));
-    console.log("🎯 Found formSubmission cookie:", cookie);
     
     if (cookie) {
       try {
         // Extract the cookie value (everything after 'formSubmission=')
         const cookieValue = cookie.split('=')[1];
-        console.log("📦 Cookie value:", cookieValue);
         
         // Parse the cookie value: form_submitted_${formId}_${timestamp}
         const parts = cookieValue.split('_');
         const timestamp = parts[1];
-        console.log("🔧 Cookie parts:", parts);
         
         if (parts[0] === formId  ) {
          
@@ -102,7 +95,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
             setSubmissionTimestamp(parseInt(timestamp));
            
         } else {
-          console.log("❌ Invalid cookie format, treating as new user");
           setIsNewUser(true);
         }
       } catch (error) {
@@ -110,7 +102,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
         setIsNewUser(true);
       }
     } else {
-      console.log("🚫 No formSubmission cookie found, treating as new user");
       setIsNewUser(true);
     }
 
@@ -118,7 +109,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
     setIsFormLoaded(true);
     // For now, we'll use mock data or data from editing state
   
-    console.log('Loading form for response:', formId);
     fetchFormData()
     .finally(()=>{
       setIsFormLoaded(false)
@@ -127,7 +117,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const handleResponseChange = (elementId: string, value: string) => {
     // TODO: Dispatch action to update response in store
-    console.log("updating state value",elementId,value)
     dispatch(updateFormResponse({
         elementId,
         value
@@ -152,7 +141,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
     })
     .then((response) => {
       if (response.ok) {
-        console.log('Form submitted successfully');
       } else {
         console.error('Failed to submit form');
       }
@@ -160,14 +148,12 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
     .catch((error) => {
       console.error('Error submitting form:', error);
     });
-    console.log('Submitting form responses:', responses);
     setIsResponseSubmitting(false);
   };
 
   if(isFormLoaded){
     return <LoadingPage/>
   }
-console.log(isNewUser)
   if(!isNewUser){
     return <FormAlreadySubmited 
       formTitle={formTitle}

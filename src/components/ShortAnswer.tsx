@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Input } from "./ui/input";
 import { ExampleCombobox as Compobobox } from "./ui/Combobox";
-import { Trash2Icon } from "lucide-react";
+import { FileText, Trash2Icon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import FormOptionsToolkit from "./ui/FormOptionsToolkit";
 import { useAppDispatch } from "@/lib/hooks";
@@ -25,7 +25,6 @@ type Props = {
 
 // Utility function for easy console logging with template literals
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const lg = (...args: any[]) => console.log(...args);
 
 const ShortAnswer = ({
   questionType,
@@ -42,7 +41,7 @@ const ShortAnswer = ({
   isCurrentlyEditing,
   id,
 }: Props) => {
-  const [showDescription, setShowDescription] = React.useState(true);
+  const [showDescription, setShowDescription] = React.useState(false);
   const textRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
@@ -116,6 +115,17 @@ const ShortAnswer = ({
       <div className="w-full h-4"></div>
       <hr className="w-full border-gray-200 dark:border-gray-700" />
       <div className="flex justify-end mt-4 gap-x-4">
+         <div
+              className="px-4 py-2 border-r-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-l-md transition-all duration-200 group"
+              onClick={() => setShowDescription(!showDescription)}
+              title="Toggle description"
+            >
+              <FileText className={`h-5 w-5 transition-colors duration-200 ${
+                showDescription 
+                  ? 'text-blue-500 dark:text-blue-400' 
+                  : 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400'
+              }`} />
+            </div>
         <div
           className="px-4 py-2 border-r-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-l-md transition-all duration-200 group"
           onClick={onDelete}

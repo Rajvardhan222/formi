@@ -37,7 +37,6 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const response = await fetch(`/api/getForm/${formId}`, {
       method: "GET",
     });
-    console.log(response);
     if (response.status === 404) {
       // if returns 404 it means a new form is there
       dispatch(
@@ -56,7 +55,6 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
     } else if (response.status === 200) {
       // if returns a 200 it means it already exists
       const formData = await response.json();
-      console.log("formData in the client as it is already there", formData);
       dispatch(initialRender({ id: formId, ...formData }));
     }
 
@@ -76,7 +74,6 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
     }
 
     const updateForm = async () => {
-      console.log("Current form state in updateForm:", form);
       await fetch("/api/saveOrUpdateForm", {
         method: "POST",
         headers: {

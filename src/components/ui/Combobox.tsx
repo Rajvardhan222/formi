@@ -53,7 +53,6 @@ export function ExampleCombobox({ questionType }: { questionType: QuestionType }
   //when the value of the form changes
   React.useEffect(() => {
     if (value) {
-      console.log("Selected type:", value)
       // Dispatch an action to update the form state
       dispatch(updateFormElementType({ type: value }))
     }
@@ -88,18 +87,12 @@ export function ExampleCombobox({ questionType }: { questionType: QuestionType }
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    console.log("=== DEBUG INFO ===");
-                    console.log("Clicked framework:", framework);
-                    console.log("onSelect currentValue:", currentValue);
-                    console.log("framework.value:", framework.value);
-                    console.log("current value state:", value);
+                  
                     
                     // Only set if it's a valid QuestionType
                     if (framework.value === "short_answer" || framework.value === "multi_choice") {
-                      console.log("Setting value to:", framework.value);
                       setValue(framework.value as QuestionType);
                     } else {
-                      console.log("Invalid type, not setting:", framework.value);
                     }
                     setOpen(false)
                   }}

@@ -66,7 +66,6 @@ export const responseFormSlice = createSlice({
       const existingResponseIndex = state.responses.findIndex(
         (response) => response.elementId === elementId
       );
-      console.log("existingResponseIndex", existingResponseIndex);
 
       //add the response for that elementId or update
       if (existingResponseIndex > -1) {

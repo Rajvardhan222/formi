@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addElement } from "@/lib/features/editslice/editform.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { Copy } from "lucide-react";
 
 type Props = {
   ref?: React.RefObject<HTMLDivElement>;
@@ -67,7 +68,7 @@ const FormOptionsToolkit = ({ ref, elementId }: Props) => {
 
   return (
     <div
-      className="fixed z-50 flex w-20 flex-col gap-y-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 justify-start p-3 rounded-lg shadow-xl backdrop-blur-sm"
+      className="fixed z-50 flex w-20 flex-col gap-y-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 justify-start items-center scale-95 p-3 rounded-lg shadow-xl backdrop-blur-sm"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -95,6 +96,14 @@ const FormOptionsToolkit = ({ ref, elementId }: Props) => {
             d="M12 4v16m8-8H4"
           />
         </svg>
+      </div>
+
+      {/* copy icon inside circle */}
+      <div
+        className="flex items-center justify-center w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-full cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 border-2 border-gray-200 dark:border-gray-600 group shadow-sm hover:shadow-md"
+        title="Copy element"
+      >
+        <Copy className="h-6 w-6 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
       </div>
     </div>
   );

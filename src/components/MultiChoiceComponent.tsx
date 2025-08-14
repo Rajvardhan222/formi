@@ -4,7 +4,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import React from 'react'
 import { Input } from './ui/input';
 import { ExampleCombobox as Compobobox } from './ui/Combobox';
-import { Trash2Icon, XIcon } from 'lucide-react';
+import { Trash2Icon, XIcon, FileText } from 'lucide-react';
 import { Switch } from './ui/switch';
 import FormOptionsToolkit from './ui/FormOptionsToolkit';
 import { useAppSelector } from '@/lib/hooks';
@@ -173,7 +173,7 @@ const MultiChoiceComponent = ({
                     </div>
                 ))}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3" >
               <button
                 type="button"
                 className="ml-7 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all cursor-pointer duration-200 shadow-sm hover:shadow-md"
@@ -184,10 +184,23 @@ const MultiChoiceComponent = ({
             </div>
           </div>
           <hr className="w-full border-gray-200 dark:border-gray-700 mt-4" />
+
           <div className="flex justify-end mt-4 gap-x-4">
             <div
               className="px-4 py-2 border-r-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-l-md transition-all duration-200 group"
+              onClick={() => setShowDescription(!showDescription)}
+              title="Toggle description"
+            >
+            <FileText className={`h-5 w-5 transition-colors duration-200 ${
+                            showDescription 
+                              ? 'text-blue-500 dark:text-blue-400' 
+                              : 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400'
+                          }`} />
+            </div>
+            <div
+              className="px-4 py-2 border-r-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 group"
               onClick={onDelete}
+              title="Delete element from form"
             >
               <Trash2Icon className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors duration-200" />
             </div>
