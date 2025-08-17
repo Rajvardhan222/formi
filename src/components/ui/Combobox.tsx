@@ -27,23 +27,16 @@ const frameworks = [
     label: "Short Answer",
   },
   {
-    value: "long_answer",
-    label: "Long Answer",
+    value: "single_choice",
+    label: "Single Choice",
   },
   {
     value: "multi_choice",
     label: "Multiple Choice",
-  },
-  {
-    value: "checkbox",
-    label: "Checkbox",
-  },
-  {
-    value: "dropdown",
-    label: "Dropdown",
-  },
+  }
+   
 ]
-type QuestionType = "short_answer" | "multi_choice" ;
+type QuestionType = "short_answer" | "multi_choice"  | "single_choice";
 export function ExampleCombobox({ questionType }: { questionType: QuestionType }) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState<QuestionType>(questionType)
@@ -53,6 +46,7 @@ export function ExampleCombobox({ questionType }: { questionType: QuestionType }
   //when the value of the form changes
   React.useEffect(() => {
     if (value) {
+      console.log("Selected value:", value)
       // Dispatch an action to update the form state
       dispatch(updateFormElementType({ type: value }))
     }
@@ -90,7 +84,7 @@ export function ExampleCombobox({ questionType }: { questionType: QuestionType }
                   
                     
                     // Only set if it's a valid QuestionType
-                    if (framework.value === "short_answer" || framework.value === "multi_choice") {
+                    if (framework.value === "short_answer" || framework.value === "multi_choice" || framework.value === "single_choice") {
                       setValue(framework.value as QuestionType);
                     } else {
                     }

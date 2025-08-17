@@ -9,7 +9,8 @@ import LoadingPage from '@/components/ui/LoadingPage';
 import { setFormStore } from '@/lib/features/responseformSlice/ResponseFormSlice';
 import FormAlreadySubmited from '@/components/ui/FormAlreadySubmited';
 import MultiChoiceComponent from '@/components/MultiChoiceComponent';
-
+import SingleChoiceForm from '@/components/SingleChoiceComponent';
+import { useRouter } from 'next/navigation';
 type ElementType = {
   [key: string]: React.ComponentType<{
     id: string;
@@ -34,13 +35,15 @@ const currentTimeKey = "currentTime"
 
 const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
-  multi_choice:MultiChoiceComponent
+  multi_choice:MultiChoiceComponent,
+  single_choice: SingleChoiceForm
 };
 
 const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const [isNewUser, setIsNewUser] = useState(true); // Default to true
   const [submissionTimestamp, setSubmissionTimestamp] = useState<number | null>(null);
+  const router = useRouter();
 
   // save current time in local storage in seconds
   const currentTime = Math.floor(Date.now() / 1000); // we divide ms with 1000 to get second(s)
@@ -52,9 +55,9 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
   const formTitle = formData.formTitle || "Untitled Form";
   const formDescription = formData.formDescription || "Please fill out this form";
   const elements = formData.elements || [];
-  const [isFormLoaded, setIsFormLoaded] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
   const [isResponseSubmitting, setIsResponseSubmitting] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   // Convert responses array to object for easier lookup
   const responses = formData.responses.reduce((acc: Record<string, string>, response) => {
@@ -64,14 +67,27 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
 
   async function fetchFormData() {
-    const response = await fetch(`/api/getForm/${formId}`, {
-      method: "GET",
-    });
-    if (response.status === 200) {
-      const formData = await response.json();
-      dispatch(setFormStore(formData));
-    } else {
-      console.error("Failed to fetch form data");
+    try {
+      const response = await fetch(`/api/getForm/${formId}`, {
+        method: "GET",
+      });
+      
+      if (response.status === 200) {
+        const formData = await response.json();
+        dispatch(setFormStore(formData));
+        setIsInitialLoading(false);
+      } else if(response.status === 404) {
+        router.push("/404");
+        return; // Don't set loading to false, let the redirect happen
+      } else {
+        console.error("Failed to fetch form data");
+        setIsError(true);
+        setIsInitialLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching form data:", error);
+      setIsError(true);
+      setIsInitialLoading(false);
     }
   }
 
@@ -105,14 +121,8 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
       setIsNewUser(true);
     }
 
-    // TODO: Fetch form data based on formId and initialize the response form
-    setIsFormLoaded(true);
-    // For now, we'll use mock data or data from editing state
-  
-    fetchFormData()
-    .finally(()=>{
-      setIsFormLoaded(false)
-    })
+    // Fetch form data based on formId and initialize the response form
+    fetchFormData();
   }, [formId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleResponseChange = (elementId: string, value: string) => {
@@ -140,20 +150,44 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
       }),
     })
     .then((response) => {
+      console.log(response)
       if (response.ok) {
+        // Form submitted successfully
+        const timestamp = Math.floor(Date.now() / 1000);
+        
+        // Set cookie to prevent resubmission - format: formId_timestamp
+       
+        
+        // Redirect to submitted page
+        router.push(`/forms/d/${formId}/submitted`);
       } else {
         console.error('Failed to submit form');
       }
     })
     .catch((error) => {
       console.error('Error submitting form:', error);
+    })
+    .finally(() => {
+      setIsResponseSubmitting(false);
     });
-    setIsResponseSubmitting(false);
   };
 
-  if(isFormLoaded){
+  if(isInitialLoading){
     return <LoadingPage/>
   }
+  
+  if(isError){
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400 text-lg">
+            Failed to load form. Please try again later.
+          </p>
+        </div>
+      </div>
+    )
+  }
+  
   if(!isNewUser){
     return <FormAlreadySubmited 
       formTitle={formTitle}
@@ -181,7 +215,6 @@ const FormResponsePage = ({ params }: { params: Promise<{ id: string }> }) => {
               viewMode="user"
               question={element.label}
               description={element.description}
-              element={element}
               required={element.required}
               value={responses[element.id] || ""}
               onValueChange={(value: string) => handleResponseChange(element.id, value)}

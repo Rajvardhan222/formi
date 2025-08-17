@@ -17,9 +17,38 @@ export async function GET(
         }
       
 
-       const form: Forms = await db.select("*")
+       const form: Forms[] = await db.select("*")
             .from("forms")
             .where("formId", formId)
+
+            //get user browser url
+            const userBrowserUrl = request.headers.get('referer') || 'unknown';
+            // check if he has formResponse at the end of url
+
+            const hasFormResponse = userBrowserUrl.endsWith("formResponse");
+
+            // check if form is published if user is formResponse url
+
+            if(hasFormResponse && !form[0].is_published){
+                return new Response(JSON.stringify({
+                    message: "Form not found",
+                    status:404,
+                }),{
+                    status:404
+                })
+            }
+
+            if (hasFormResponse) {
+                // increase view count
+                await db("forms")
+                    .where("formId", formId)
+                    .increment("view_count", 1);
+            }
+
+         
+
+
+
             
       
 
@@ -31,6 +60,7 @@ export async function GET(
                     formTitle: form[0].title,
                     formDescription: form[0].description,
                     elements: (form[0].elements),
+                    is_published:form[0].is_published
                 }
             ), {
                 status: 200,

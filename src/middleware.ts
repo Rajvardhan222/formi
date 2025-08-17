@@ -2,8 +2,11 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isProtectedRoute = createRouteMatcher([
   '/forms/d/(.*)/editing(.*)',
- 
-  
+  "/api/saveOrUpdateForm",
+  "/api/getFormList",
+  "/api/publish/(.*)",
+  "/api/unpublish/(.*)",
+  "/api/getResponses/(.*)"
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -14,8 +17,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    '/trpc/(.*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
 

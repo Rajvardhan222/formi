@@ -16,6 +16,10 @@ import {
 import ShortAnswer from "@/components/ShortAnswer";
 import LoadingPage from "@/components/ui/LoadingPage";
 import MultiChoiceComponent from "@/components/MultiChoiceComponent";
+import SingleChoiceForm from "@/components/SingleChoiceComponent";
+import EditFormNav from "@/components/EditFormNav";
+import NavResponse from "@/components/NavResponse";
+import { ResponsesTable } from "@/components/ResponsesTable";
 
 export type ElementType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +28,7 @@ export type ElementType = {
 const formMappingToElement: ElementType = {
   short_answer: ShortAnswer,
   multi_choice: MultiChoiceComponent,
+  single_choice: SingleChoiceForm
 };
 const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: formId } = use(params);
@@ -32,6 +37,7 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const currentlyEditingElementId = form.currentEditingElementId;
   const isInitialGetRequestDone = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'form' | 'responses'>('form');
 
   const fetchForm = async () => {
     const response = await fetch(`/api/getForm/${formId}`, {
@@ -105,6 +111,10 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
   function onDescriptionChange(newDescription: string) {
     dispatch(updateDescription(newDescription));
   }
+  
+  function handleTabChange(tab: 'form' | 'responses') {
+    setActiveTab(tab);
+  }
 
   const formTitle = form?.formTitle || "";
   const formDescription = form?.formDescription || "";
@@ -118,47 +128,56 @@ const EditFormPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="w-full bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
-      <div className="md:w-1/2 m-auto py-10 flex flex-col gap-6">
-        <FormHeader
-          viewMode="admin"
-          title={formTitle}
-          description={formDescription}
-          onTitleChange={onTitleChange}
-          onDescriptionChange={onDescriptionChange}
-        />
+      <EditFormNav formId={formId} />
+      <NavResponse formId={formId} activeTab={activeTab} onTabChange={handleTabChange} />
+      
+      {activeTab === 'form' ? (
+        <div className="md:w-1/2 m-auto py-10 flex flex-col gap-6">
+          <FormHeader
+            viewMode="admin"
+            title={formTitle}
+            description={formDescription}
+            onTitleChange={onTitleChange}
+            onDescriptionChange={onDescriptionChange}
+          />
 
-        {form.elements.map((element) => {
-          const ElementComponent = formMappingToElement[element.type];
-          return (
-            <ElementComponent
-              key={element.id}
-              id={element.id}
-              viewMode="admin"
-              question={element.label}
-              description={element.description}
-              required={element.required}
-              questionType={element.type}
-              isCurrentlyEditing={
-                currentlyEditingElementId === element.id
-                  ? currentlyEditingElementId
-                  : null
-              }
-              onQuestionChange={(question: string) =>
-                dispatch(ElementQuestionChange({ id: element.id, question }))
-              }
-              onDescriptionChange={(description: string) =>
-                dispatch(
-                  ElementDescriptionChange({ id: element.id, description })
-                )
-              }
-              onRequiredChange={(required: boolean) =>
-                dispatch(ElementRequiredChange({ id: element.id, required }))
-              }
-              onDelete={() => dispatch(deleteElement(element.id))}
-            />
-          );
-        })}
-      </div>
+          {form.elements.map((element) => {
+            const ElementComponent = formMappingToElement[element.type];
+            return (
+              <ElementComponent
+                key={element.id}
+                id={element.id}
+                viewMode="admin"
+                question={element.label}
+                description={element.description}
+                required={element.required}
+                questionType={element.type}
+                isCurrentlyEditing={
+                  currentlyEditingElementId === element.id
+                    ? currentlyEditingElementId
+                    : null
+                }
+                onQuestionChange={(question: string) =>
+                  dispatch(ElementQuestionChange({ id: element.id, question }))
+                }
+                onDescriptionChange={(description: string) =>
+                  dispatch(
+                    ElementDescriptionChange({ id: element.id, description })
+                  )
+                }
+                onRequiredChange={(required: boolean) =>
+                  dispatch(ElementRequiredChange({ id: element.id, required }))
+                }
+                onDelete={() => dispatch(deleteElement(element.id))}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="container mx-auto py-4">
+          <ResponsesTable formId={formId} />
+        </div>
+      )}
     </div>
   );
 };

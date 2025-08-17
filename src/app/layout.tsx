@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
 import StoreProvider from "./StoreProvider";
+import FlyonuiScript from "@/components/Fluonui";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
               {children}
             </body>
           </html>
+         
         </StoreProvider>
       </ThemeProvider>
     </ClerkProvider>

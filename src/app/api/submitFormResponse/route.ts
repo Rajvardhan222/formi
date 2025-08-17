@@ -19,7 +19,11 @@ export const POST = async (req: Request) => {
                     user_agent: userAgent,
                 });
 
-            
+            // increment response count
+            await db("forms")
+                .where("formId", formId)
+                .increment("total_responses", 1);
+
             // Create a secure cookie that users cannot edit/delete
             const cookieValue = `${formId}_${Date.now()}`;
             const cookieOptions = [
@@ -42,6 +46,7 @@ export const POST = async (req: Request) => {
 
 
     } catch (error) {
+        console.log(error)
         return new Response("Internal Server Error", {
             status: 500,
         });

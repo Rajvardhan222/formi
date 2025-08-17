@@ -8,7 +8,7 @@ import { Trash2Icon, XIcon, FileText } from 'lucide-react';
 import { Switch } from './ui/switch';
 import FormOptionsToolkit from './ui/FormOptionsToolkit';
 import { useAppSelector } from '@/lib/hooks';
-import { Checkbox } from './ui/checkbox';
+import AnimatedRadio from './ui/AnimatedRadio';
 type Props = {
     viewMode: "admin" | "user";
     questionType: "short_answer" | "multi_choice";
@@ -28,7 +28,7 @@ type Props = {
 }
 
 
-const MultiChoiceComponent = ({
+const SingleChoiceForm = ({
     questionType,
      viewMode,
   question = "",
@@ -38,7 +38,7 @@ const MultiChoiceComponent = ({
   onDescriptionChange,
   onRequiredChange,
   onDelete,
-  value = "",
+ 
   
   isCurrentlyEditing,
   id,
@@ -46,7 +46,7 @@ const MultiChoiceComponent = ({
     const dispatch = useAppDispatch();
     const textRef = React.useRef<HTMLDivElement>(null);
     const [showDescription, setShowDescription] = React.useState(true);
-    const multiChoiceOptions = useAppSelector((state) => state.Editform.elements.find(el => el.id === id)?.options);
+    const singleChoiceOptions = useAppSelector((state) => state.Editform.elements.find(el => el.id === id)?.options);
 
 
     function addNewOption() {
@@ -89,19 +89,15 @@ const MultiChoiceComponent = ({
                     )}
                     <div className="space-y-2">
                         {userModeOptions?.map((option) => (
-                            <div key={option.id} className="flex items-center gap-3"
-                            onClick={()=> handleOptionChange(option.id)}
-                            >
-                               <Checkbox
-                                    checked={
-                                        responses.find((response) => response.elementId === id)?.value.includes(option.id) || false
-                                    }
-                                    
-                               />
-                                <label className="text-sm text-gray-700 dark:text-gray-300">
-                                    {option.label}
-                                </label>
-                            </div>
+                            <AnimatedRadio
+                                key={option.id}
+                                id={`radio-${id}-${option.id}`}
+                                name={`radio-${id}`}
+                                value={option.id}
+                                checked={responses.find((response) => response.elementId === id)?.value === option.id}
+                                onChange={() => handleOptionChange(option.id)}
+                                label={option.label}
+                            />
                         ))}
                     </div>
                 </div>
@@ -148,36 +144,44 @@ const MultiChoiceComponent = ({
           </div>
           <div className="w-full h-4"></div>
           <div className='w-full space-y-3'>
-            {
-                multiChoiceOptions?.map((option, index) => (
-                    <div key={option.id} className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full border-2 border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-800 flex-shrink-0"></div>
-                        <input 
-                            type='text' 
-                            value={option.label} 
-                            onChange={(e) => {
-                                // TODO: Add handler to update option label
-                                dispatch(editOptionMultipleFormOption({
-                                    id,
-                                    optionId: option.id,
-                                    label: e.target.value
-                                }));
-                            }}
-                            placeholder={`Option ${index + 1}`}
-                            className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200"
-                        />
-                        <button
-                            type="button"
-                            className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all duration-200"
-                            onClick={() => {
-                                // TODO: Add handler to delete option
-                                deleteOption(option.id);
-                            }}
-                        >
-                            <XIcon className="h-4 w-4" />
-                        </button>
-                    </div>
-                ))}
+             {
+                             singleChoiceOptions?.map((option, index) => (
+                                 <div key={option.id} className="flex items-center gap-3">
+                                     <AnimatedRadio
+                                         id={`admin-radio-${id}-${option.id}`}
+                                         name={`admin-radio-${id}`}
+                                         value={option.id}
+                                         checked={false}
+                                         onChange={() => {}} // No functionality in admin mode, just for visual
+                                         label=""
+                                         disabled={true}
+                                     />
+                                     <input 
+                                         type='text' 
+                                         value={option.label} 
+                                         onChange={(e) => {
+                                             // TODO: Add handler to update option label
+                                             dispatch(editOptionMultipleFormOption({
+                                                 id,
+                                                 optionId: option.id,
+                                                 label: e.target.value
+                                             }));
+                                         }}
+                                         placeholder={`Option ${index + 1}`}
+                                         className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200"
+                                     />
+                                     <button
+                                         type="button"
+                                         className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all duration-200"
+                                         onClick={() => {
+                                             // TODO: Add handler to delete option
+                                             deleteOption(option.id);
+                                         }}
+                                     >
+                                         <XIcon className="h-4 w-4" />
+                                     </button>
+                                 </div>
+                             ))}
 
             <div className="flex items-center gap-3" >
               <button
@@ -229,4 +233,4 @@ const MultiChoiceComponent = ({
   )
 }
 
-export default MultiChoiceComponent
+export default SingleChoiceForm

@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import formSlice from "./features/editslice/editform.slice"
 import responseSlice from './features/responseformSlice/ResponseFormSlice'
+import viewResponsesSlice from './features/viewResponses.slice/viewResponses'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       Editform: formSlice,
-      ResponseForm: responseSlice
+      ResponseForm: responseSlice,
+      viewResponses: viewResponsesSlice
     },
     devTools: process.env.NODE_ENV !== 'production', // Explicitly enable Redux DevTools
   })

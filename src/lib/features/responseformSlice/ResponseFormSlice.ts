@@ -63,7 +63,8 @@ export const responseFormSlice = createSlice({
       const element = state.elements.find((el) => el.id === elementId);
 
       // check if response is already there
-      const existingResponseIndex = state.responses.findIndex(
+     if(element?.type === "multi_choice"){
+       const existingResponseIndex = state.responses.findIndex(
         (response) => response.elementId === elementId
       );
 
@@ -81,6 +82,20 @@ export const responseFormSlice = createSlice({
         // Add new response
         state.responses.push({ elementId, value: [optionId] });
       }
+     }
+     else if(element?.type === "single_choice"){
+      const existingResponseIndex = state.responses.findIndex(
+        (response) => response.elementId === elementId
+      );
+
+      if (existingResponseIndex > -1) {
+        // Update existing response
+        state.responses[existingResponseIndex].value = optionId;
+      } else {
+        // Add new response
+        state.responses.push({ elementId, value: optionId });
+      }
+     }
     }
   },
 });

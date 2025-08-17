@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addElement } from "@/lib/features/editslice/editform.slice";
+import { addElement, copyElement } from "@/lib/features/editslice/editform.slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Copy } from "lucide-react";
 
@@ -63,6 +63,19 @@ const FormOptionsToolkit = ({ ref, elementId }: Props) => {
     }
   }
 
+  function handleCopyElement() {
+    const currentElement = allElements.find(
+      (element) => element.id === currentEditingElementId
+    );
+    if (currentElement) {
+      dispatch(
+        copyElement({
+          id: currentEditingElementId,
+        })
+      );
+    }
+  }
+
   // Only render if this element is currently being edited and ref exists
   if (!ref?.current || currentEditingElementId !== elementId) return null;
 
@@ -102,6 +115,7 @@ const FormOptionsToolkit = ({ ref, elementId }: Props) => {
       <div
         className="flex items-center justify-center w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-full cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 border-2 border-gray-200 dark:border-gray-600 group shadow-sm hover:shadow-md"
         title="Copy element"
+        onClick={handleCopyElement}
       >
         <Copy className="h-6 w-6 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
       </div>
