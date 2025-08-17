@@ -7,6 +7,8 @@ export const POST = async (req: Request) => {
 
             //get users ip address
             const ip = req.headers.get('x-forwarded-for') || req.headers.get('remote-addr') || 'unknown';
+            // if ip is a array take first one
+            const ipAddress = Array.isArray(ip) ? ip[0] : ip;
             // users browser user agent
             const userAgent = req.headers.get('user-agent') || 'unknown';
 
@@ -15,7 +17,7 @@ export const POST = async (req: Request) => {
                     formId: formId,
                     response_data: JSON.stringify(responses),
                     completion_time_seconds: completionTimeSeconds,
-                    ip_address: ip,
+                    ip_address:ipAddress,
                     user_agent: userAgent,
                 });
 
