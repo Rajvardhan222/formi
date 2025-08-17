@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
                     formId: formId,
                     response_data: JSON.stringify(responses),
                     completion_time_seconds: completionTimeSeconds,
-                    ip_address:ipAddress,
+                   
                     user_agent: userAgent,
                 });
 
