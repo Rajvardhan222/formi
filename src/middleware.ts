@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isProtectedRoute = createRouteMatcher([
   '/forms/d/(.*)/editing(.*)',
+  '/u',
   "/api/saveOrUpdateForm",
   "/api/getFormList",
   "/api/publish/(.*)",
